@@ -41,17 +41,17 @@ fn axpy<'py>(
     a: f64,
     x: PyReadonlyArrayDyn<'py, f64>,
     y: PyReadonlyArrayDyn<'py, f64>,
-) -> &'py PyArrayDyn<f64> {
+) -> Bound<'py, PyArrayDyn<f64>> {
     let x = x.as_array();
     let y = y.as_array();
     let z = a * &x + &y;
-    z.into_pyarray(py)
+    z.into_pyarray_bound(py)
 }
 
 // example using a mutable borrow to modify an array in-place
 #[pyfunction]
-fn mult<'py>(
-    a: f64, x: &'py PyArrayDyn<f64>
+fn mult(
+    a: f64, x: & PyArrayDyn<f64>
 ) {
     let mut x = unsafe { x.as_array_mut() };
     x *= a;
@@ -64,7 +64,7 @@ fn nalgebra_dmatrix_to_numpy_ndarray<'py>(py: Python<'py>) -> Py<PyArray<f64, Ix
         1.0, 2.0,
         3.0, 4.0,
     ]);
-    let numpy_array = dmatrix.to_pyarray(py).to_owned();
+    let numpy_array = dmatrix.to_pyarray_bound(py).unbind();
     numpy_array
 }
 
