@@ -1,6 +1,6 @@
 use pyo3::prelude::*;
 use numpy::{IntoPyArray, PyArrayDyn, PyReadonlyArrayDyn, ToPyArray, PyArray, Ix2};
-use nalgebra::DMatrix;
+use nalgebra::{DMatrix, DVector};
 
 /// Formats the sum of two numbers as string.
 #[pyfunction]
@@ -70,14 +70,30 @@ fn nalgebra_dmatrix_to_numpy_ndarray<'py>(py: Python<'py>) -> Py<PyArray<f64, Ix
 
 #[pyfunction]
 fn numpy_ndarray_to_nalgebra_dmatrix<'py>(x: PyReadonlyArrayDyn<'py, f64>) {
+    if x.as_array().shape().len() != 2 {
+        panic!("Input array must be 2D");
+    }
     let nrows = x.as_array().shape()[0];
     let ncols = x.as_array().shape()[1];
     // convert to nalgebra DMatrix
-    let x = match x.as_slice() {
+    let m = match x.as_slice() {
         Ok(s) => DMatrix::<f64>::from_row_slice(nrows, ncols, s),
         Err(e) => panic!("{}", e)
     };
-    println!("{}", x);
+    println!("{}", m);
+}
+
+#[pyfunction]
+fn numpy_ndarray_to_nalgebra_dvector<'py>(x: PyReadonlyArrayDyn<'py, f64>) {
+    if x.as_array().shape().len() != 1 {
+        panic!("Input array must be 1D");
+    }
+    // convert to nalgebra DVatrix
+    let v= match x.as_slice() {
+        Ok(s) => DVector::<f64>::from_row_slice(s),
+        Err(e) => panic!("{}", e)
+    };
+    println!("{}", v);
 }
 
 /// A Python module implemented in Rust. The name of this function must match
@@ -92,5 +108,6 @@ fn pyo3_nalgebra_example<'py>(m: &Bound<'py, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(mult, m)?)?;
     m.add_function(wrap_pyfunction!(nalgebra_dmatrix_to_numpy_ndarray, m)?)?;
     m.add_function(wrap_pyfunction!(numpy_ndarray_to_nalgebra_dmatrix, m)?)?;
+    m.add_function(wrap_pyfunction!(numpy_ndarray_to_nalgebra_dvector, m)?)?;
     Ok(())
 }

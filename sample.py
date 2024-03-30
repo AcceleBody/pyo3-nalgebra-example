@@ -25,3 +25,4 @@ print(m)
 
 # test Python Numpy ndarray to Rust nalgebra
 pyo3_nalgebra_example.numpy_ndarray_to_nalgebra_dmatrix(np.array([[1., 2.], [3., 4.]]))
+pyo3_nalgebra_example.numpy_ndarray_to_nalgebra_dvector(np.array([1., 2.]))
