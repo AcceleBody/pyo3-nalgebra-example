@@ -1,6 +1,8 @@
-use pyo3::prelude::*;
-use numpy::{IntoPyArray, PyArrayDyn, PyReadonlyArrayDyn, ToPyArray, PyArray, Ix2, PyReadwriteArrayDyn};
 use nalgebra::{DMatrix, DVector};
+use numpy::{
+    IntoPyArray, Ix2, PyArray, PyArrayDyn, PyReadonlyArrayDyn, PyReadwriteArrayDyn, ToPyArray,
+};
+use pyo3::prelude::*;
 
 /// Formats the sum of two numbers as string.
 #[pyfunction]
@@ -50,9 +52,7 @@ fn axpy<'py>(
 
 // example using a mutable borrow to modify an array in-place
 #[pyfunction]
-fn mult<'py>(
-    a: f64, mut x: PyReadwriteArrayDyn<'py, f64>
-) {
+fn mult<'py>(a: f64, mut x: PyReadwriteArrayDyn<'py, f64>) {
     let mut x = x.as_array_mut();
     x *= a;
 }
@@ -60,10 +60,7 @@ fn mult<'py>(
 #[pyfunction]
 fn nalgebra_dmatrix_to_numpy_ndarray<'py>(py: Python<'py>) -> Py<PyArray<f64, Ix2>> {
     // nalgebra 2x2 DMatrix
-    let dmatrix = DMatrix::<f64>::from_row_slice(2, 2, &[
-        1.0, 2.0,
-        3.0, 4.0,
-    ]);
+    let dmatrix = DMatrix::<f64>::from_row_slice(2, 2, &[1.0, 2.0, 3.0, 4.0]);
     let numpy_array = dmatrix.to_pyarray_bound(py).unbind();
     numpy_array
 }
@@ -78,7 +75,7 @@ fn numpy_ndarray_to_nalgebra_dmatrix<'py>(x: PyReadonlyArrayDyn<'py, f64>) {
     // convert to nalgebra DMatrix
     let m = match x.as_slice() {
         Ok(s) => DMatrix::<f64>::from_row_slice(nrows, ncols, s),
-        Err(e) => panic!("{}", e)
+        Err(e) => panic!("{}", e),
     };
     println!("{}", m);
 }
@@ -89,9 +86,9 @@ fn numpy_ndarray_to_nalgebra_dvector<'py>(x: PyReadonlyArrayDyn<'py, f64>) {
         panic!("Input array must be 1D");
     }
     // convert to nalgebra DVatrix
-    let v= match x.as_slice() {
+    let v = match x.as_slice() {
         Ok(s) => DVector::<f64>::from_row_slice(s),
-        Err(e) => panic!("{}", e)
+        Err(e) => panic!("{}", e),
     };
     println!("{}", v);
 }
