@@ -1,5 +1,5 @@
 use pyo3::prelude::*;
-use numpy::{IntoPyArray, PyArrayDyn, PyReadonlyArrayDyn, ToPyArray, PyArray, Ix2};
+use numpy::{IntoPyArray, PyArrayDyn, PyReadonlyArrayDyn, ToPyArray, PyArray, Ix2, PyReadwriteArrayDyn};
 use nalgebra::{DMatrix, DVector};
 
 /// Formats the sum of two numbers as string.
@@ -50,10 +50,10 @@ fn axpy<'py>(
 
 // example using a mutable borrow to modify an array in-place
 #[pyfunction]
-fn mult(
-    a: f64, x: & PyArrayDyn<f64>
+fn mult<'py>(
+    a: f64, mut x: PyReadwriteArrayDyn<'py, f64>
 ) {
-    let mut x = unsafe { x.as_array_mut() };
+    let mut x = x.as_array_mut();
     x *= a;
 }
 
