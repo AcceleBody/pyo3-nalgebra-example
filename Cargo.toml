@@ -18,8 +18,5 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = { version = "0.21.0", features = ["extension-module"] }
-nalgebra = "*"
-numpy = { git = "https://github.com/PyO3/rust-numpy" , features=["nalgebra"]}
-# The rust-numpy crate does not support PyO3 version 0.21.0, so use the latest crate from GitHub.
-# In the near future, version 0.21.0 of rust-numpy will probably be released. At that time, comment out the following.
-# numpy = { version = "0.21.0", features=["nalgebra"]}
+nalgebra = "0.32.3"
+numpy = { version = "0.21.0", features=["nalgebra"] }
